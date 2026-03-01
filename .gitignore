@@ -1,0 +1,15 @@
+# Environment variables (contains secrets)
+.env
+
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Cloudflared binary (large binary, can be re-downloaded)
+cloudflared
+
+# OS files
+.DS_Store
+Thumbs.db
