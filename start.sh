@@ -72,19 +72,11 @@ if [ -n "$CF_BIN" ]; then
   echo "  Open it on your phone — it's the full chat interface."
   echo "  (Ctrl+C to stop everything)"
   echo ""
-  # --edge-ip-version 4 forces IPv4 — required on WSL2 (no IPv6 routing)
-  "$CF_BIN" tunnel --url "http://localhost:${PORT}" --edge-ip-version 4 2>&1 | \
-    while IFS= read -r line; do
-      if echo "$line" | grep -qE 'trycloudflare\.com|ERR|error|warn'; then
-        echo "$line"
-      fi
-      URL=$(echo "$line" | grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' || true)
-      if [ -n "$URL" ]; then
-        curl -s -X POST http://localhost:8080/api/send \
-          -H "Content-Type: application/json" \
-          -d "{\"recipient\":\"61450466234\",\"message\":\"$URL\"}" &
-      fi
-    done &
+  # Named tunnel — permanent URL: https://claude.shoreline-box.com
+  # (URL is stable so no need to WhatsApp it each time)
+  # For ad-hoc quick tunnels on other projects, use ~/quick-tunnel.sh <port>
+  "$CF_BIN" tunnel --config ~/.cloudflared/claude-mobile.yml run claude-mobile 2>&1 | \
+    grep -E 'ERR|error|warn|INF' &
   TUNNEL_PID=$!
 else
   echo ""
